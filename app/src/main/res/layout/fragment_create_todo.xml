@@ -41,7 +41,7 @@
             android:layout="@layout/parts_create_todo_error_message"
             />
 
-        <me.stepy.app.view.TodoGroupLinearLayout
+        <me.stepy.app.presentation.view.compornent.TodoGroupLinearLayout
             android:id="@+id/parent_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
