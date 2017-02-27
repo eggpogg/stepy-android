@@ -119,11 +119,7 @@ class ItemListFragment : BaseFragment(), ItemListLoadData {
             notebook?.let {
                 title = it.title
             } ?: let {
-                ui.editTitleView.run {
-                    visibility = View.VISIBLE
-                    isFocusable = true
-                    setText("EDIT TEXT")
-                }
+                title = "無題のドキュメント"
             }
             setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
             setNavigationOnClickListener { activity.supportFragmentManager.popBackStack() }
