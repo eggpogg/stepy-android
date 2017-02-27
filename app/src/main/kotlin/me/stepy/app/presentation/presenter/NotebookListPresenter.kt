@@ -53,8 +53,6 @@ class NotebookListPresenter @Inject constructor(val noteListsUseCase: NotebookLi
     }
 
     private fun loadNoteList() {
-        // val action2 = Action2<MutableList<Notebook>, Notebook> { list, note -> list.add(note) }
-        // val notebooks = Func0<MutableList<Notebook>> { mutableListOf() }
         val _subscription = noteListsUseCase.loadNoteList(App.userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -42,18 +42,25 @@ class ItemListFragment : BaseFragment(), ItemListLoadData {
         return ui.createView(AnkoContext.Companion.create(ctx, this))
     }
 
-    private lateinit var notebook: Notebook
+    private var notebook: Notebook? = null
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         initializeInjector()
         notebookPresenter.setView(this)
+        adapter = ui.list.adapter as ItemListAdapter
 
-        notebook = Notebook.create(arguments.getString("notebook"))
+        arguments?.let {
+            notebook = Notebook.create(it.getString("notebook"))
+        }
 
+        init()
+    }
+
+    private fun init() {
         setToolbar()
-        appearAppBar()
+        // appearAppBar()
         appearItemList()
-        appearCreateItem()
+        // appearCreateItem()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -109,7 +116,15 @@ class ItemListFragment : BaseFragment(), ItemListLoadData {
 
     private fun setToolbar() {
         ui.toolbar.run {
-            title = notebook.title
+            notebook?.let {
+                title = it.title
+            } ?: let {
+                ui.editTitleView.run {
+                    visibility = View.VISIBLE
+                    isFocusable = true
+                    setText("EDIT TEXT")
+                }
+            }
             setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
             setNavigationOnClickListener { activity.supportFragmentManager.popBackStack() }
             inflateMenu(R.menu.menu_main)

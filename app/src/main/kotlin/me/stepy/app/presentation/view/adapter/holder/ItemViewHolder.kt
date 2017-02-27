@@ -11,20 +11,44 @@ import me.stepy.app.presentation.view.ui.colorInt
 import org.jetbrains.anko.*
 
 class ItemViewHolder(box: View) : RecyclerView.ViewHolder(box) {
-    var actionView = box.findViewById(R.id.action) as TextView
-    var createdAtView: TextView = box.findViewById(R.id.createdAt) as TextView
 
-    fun bind(item: Item, position: Int) {
+    fun bind(item: Item?, position: Int) {
+        when (itemViewType) {
+            TYPE_ITEM -> if (item is Item) {
+                bindItem(item)
+            }
+            TYPE_ITEM_CREATE -> bindItemCreate()
+        }
+    }
+
+    private fun bindItemCreate() {
+        // do nothing
+    }
+
+    private fun bindItem(item: Item) {
+        val actionView = itemView.findViewById(actionViewId) as TextView
+        val createdAtView = itemView.findViewById(createdViewId) as TextView
+
         itemView.tag = item
         actionView.text = item.title
         createdAtView.text = "0"
     }
 
     companion object {
-        val actionViewId = View.generateViewId()
-        val createdViewId = View.generateViewId()
+        private val actionViewId = View.generateViewId()
+        private val createdViewId = View.generateViewId()
 
-        fun createView(parent: View): View {
+        val TYPE_ITEM = 1
+        val TYPE_ITEM_CREATE = 2
+
+        fun createView(parent: View, viewType: Int): View {
+            return when (viewType) {
+                TYPE_ITEM_CREATE -> createViewItemCreate(parent)
+                else -> createViewItem(parent)
+            }
+        }
+
+        private fun createViewItem(parent: View): View {
             return with(parent.context) {
                 frameLayout {
                     lparams {
@@ -66,6 +90,21 @@ class ItemViewHolder(box: View) : RecyclerView.ViewHolder(box) {
                         textView {
                             id = createdViewId
                         }
+                    }
+                }
+            }
+        }
+
+        private fun createViewItemCreate(parent: View): View {
+            return with(parent.context) {
+                frameLayout {
+                    textView {
+                        lparams {
+                            width = matchParent
+                            height = dip(24)
+                        }
+                        gravity = Gravity.CENTER
+                        text = "+ リストアイテム"
                     }
                 }
             }

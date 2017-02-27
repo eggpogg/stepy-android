@@ -1,17 +1,19 @@
 package me.stepy.app.presentation.view.ui
 
 import android.support.design.widget.AppBarLayout
+import android.support.design.widget.CollapsingToolbarLayout
+import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.View
+import android.widget.EditText
 import me.stepy.app.R
 import me.stepy.app.domain.model.Notebook
-import me.stepy.app.presentation.view.adapter.NoteListAdapter
+import me.stepy.app.presentation.view.adapter.ItemListAdapter
 import me.stepy.app.presentation.view.compornent.CustomScrollingViewBehavior
 import me.stepy.app.presentation.view.compornent.DividerItemDecoration
-import me.stepy.app.presentation.view.fragment.NoteListFragment
 import me.stepy.app.presentation.view.fragment.ItemListFragment
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
@@ -26,6 +28,7 @@ class ItemListFragmentUI : AnkoComponent<ItemListFragment> {
 
     lateinit var list: RecyclerView
     lateinit var toolbar: Toolbar
+    lateinit var editTitleView: EditText
     lateinit var appBar: AppBarLayout
     var swipeRefreshListener: (() -> Unit)? = null
     var notebookClickListener: ((Notebook) -> Unit)? = null
@@ -42,24 +45,40 @@ class ItemListFragmentUI : AnkoComponent<ItemListFragment> {
                     lparams {
                         width = matchParent
                         height = dip(200)
+                        minimumHeight = attrAsDimen(R.attr.actionBarSize)
                         backgroundColor = colorInt(R.color.cyan_400)
-                        scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
-                                AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
                     }
                     appBar = this
                     collapsingToolbarLayout {
                         lparams {
                             width = matchParent
                             height = matchParent
-                            setContentScrimColor(colorInt(R.color.cyan_400))
                             expandedTitleGravity = Gravity.CENTER
+                            setContentScrimColor(colorInt(R.color.cyan_400))
+                            if (this is AppBarLayout.LayoutParams) {
+                                scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
+                                        AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+                            }
                         }
                         toolbar {
-                            lparams {
-                                width = matchParent
-                                height = dimen(R.dimen.abc_action_bar_default_height_material)
+                            val _height = attrAsDimen(R.attr.actionBarSize)
+                            layoutParams = CollapsingToolbarLayout.LayoutParams(matchParent, _height).apply {
+                                backgroundColor = colorInt(R.color.cyan_400)
+                                minimumHeight = attrAsDimen(R.attr.actionBarSize)
+                                collapseMode = COLLAPSE_MODE_PIN
+                                setTitleTextColor(colorInt(R.color.white))
                             }
                             toolbar = this
+                            editText {
+                                val _height = attrAsDimen(R.attr.actionBarSize)
+                                visibility = View.GONE
+                                layoutParams = CollapsingToolbarLayout.LayoutParams(matchParent, _height).apply {
+                                    backgroundColor = colorInt(R.color.cyan_400)
+                                    minimumHeight = attrAsDimen(R.attr.actionBarSize)
+                                    collapseMode = COLLAPSE_MODE_PIN
+                                }
+                                editTitleView = this
+                            }
                         }
                     }
                 }
@@ -78,7 +97,7 @@ class ItemListFragmentUI : AnkoComponent<ItemListFragment> {
                             width = matchParent
                             height = matchParent
                         }
-                        adapter = NoteListAdapter().apply {
+                        adapter = ItemListAdapter().apply {
                             notebookClickListener = this@ItemListFragmentUI.notebookClickListener
                         }
                         layoutManager = LinearLayoutManager(ctx)

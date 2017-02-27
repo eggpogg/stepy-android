@@ -44,7 +44,7 @@ class NoteListFragment : BaseFragment(), NotebookListLoadData {
         adapter = ui.list.adapter as NoteListAdapter
         adapter.notebookClickListener = { notebook -> appearNotebookFragment(notebook) }
 
-        ui.fabClickListener = { noteListPresenter.createNotebook("TEST NOTEBOOK") }
+        ui.createNotebookClickListener = { mainActivity.fm.openAsAdd(ItemListFragment::class.java) }
         ui.swipeRefreshListener = { noteListPresenter.execute() }
     }
 
